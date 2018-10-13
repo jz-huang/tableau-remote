@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Our Story</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // var socket = io.connect('http://localhost');
+      // socket.on('news', function (data) {
+      //   console.log(data);
+      //   socket.emit('my other event', { my: 'data' });
+      // });
+    </script>
+    <script type="text/javascript" 
+	    src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script>
+    <script type="text/javascript">
+        var viz;
+        function initViz() {
+            var containerDiv = document.getElementById("vizContainer"),
+                url = "https://public.tableau.com/views/TestStory_11/Story1",
+                options = {
+                    hideTabs: true,
+                    onFirstInteractive: function () {
+                        console.log("Run this code when the viz has finished loading.");
+                        setup();
+                    }
+                };
+            viz = new tableau.Viz(containerDiv, url, options); 
+            function setup() {
+              console.log('setting up');
+              var story = viz.getWorkbook().getActiveSheet();
+              var socket = io();
+              socket.emit('connect viz');
+              socket.on('next-story', function () { 
+                story.activateNextStoryPointAsync();
+              });
+              socket.on('prev-story', function () {
+                story.activatePreviousStoryPointAsync();
+              });
+            }
+
+
+            // Create a viz object and embed it in the container div.
+        }
+    </script>
+</head>
+
+<body onload="initViz();">
+    <div id="vizContainer" style="width:800px; height:700px;"></div>    
+</body>
+
+</html>
